@@ -38,13 +38,19 @@ const controlSearch = async() => {
         searchView.clearResults();
         renderLoader(variables.searchRes);
 
-        //4. Search for recipes
-        await state.search.getResults();
+        try {
+            //4. Search for recipes
+            await state.search.getResults();
 
-        //5. Render it on the UI
-        clearLoader();
-        searchView.renderResults(state.search.recipe);
-        // console.log(state.search.recipe);
+            //5. Render it on the UI
+            clearLoader();
+            searchView.renderResults(state.search.recipe);
+            // console.log(state.search.recipe);
+        } catch (err) {
+            clearLoader();
+            alert('Something went wrong while searching...');
+            console.log(err);
+        }
 
     }
 }
@@ -54,34 +60,40 @@ const controlSearch = async() => {
 /** RECIPE CONTROLLER */
 /********************************************* */
 
-// const controlRecipe = async() => {
+const controlRecipe = async() => {
 
-//     //Get ID from URL
-//     const id = window.location.hash.replace('#', '');
+    //Get ID from URL
+    const id = window.location.hash.replace('#', '');
 
-//     if (id) {
-//         // Prepaare UI for changes
+    if (id) {
+        // Prepaare UI for changes
+        //Create new recipe object
+        state.recipe = new Recipe(id);
+
+        try {
+            //Get recipe data
+            await state.recipe.getRecipe();
+
+            //Calculate servings and time
+            state.recipe.calcTime();
+            state.recipe.calcServing();
+
+            //Render recipe
+            console.log(state.recipe);
+
+        } catch (err) {
+            alert('Error processing the recipe.');
+            console.log(err);
+        }
 
 
-//         //Create new recipe object
-//         state.recipe = new Recipe(id);
-
-//         //Get recipe data
-//         await state.recipe.getRecipe();
-
-//         //Calculate servings and time
-//         state.recipe.calcTime();
-//         state.recipe.calcServing();
-
-//         //Render recipe
-//         console.log(state.recipe);
 
 
-//     }
+    }
 
-// }
+}
 
-// window.addEventListener('hashchange', controlRecipe);
+window.addEventListener('hashchange', controlRecipe);
 
 
 /********************************************* */
@@ -102,7 +114,7 @@ variables.searchResPages.addEventListener('click', e => {
         const goToPage = parseInt(btn.dataset.goto, 10);
         searchView.clearResults();
         searchView.renderResults(state.search.recipe, goToPage);
-        console.log(goToPage);
+        // console.log(goToPage);
     }
 
 });
