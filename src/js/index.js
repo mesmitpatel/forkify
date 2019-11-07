@@ -2,6 +2,7 @@ import axios from 'axios';
 import Search from './models/Search';
 import Recipe from './models/Recipe';
 import * as searchView from './views/SearchView';
+import * as recipeView from './views/recipeView';
 import { variables, renderLoader, elememntStrings, clearLoader } from './views/base';
 
 
@@ -24,10 +25,10 @@ const controlSearch = async() => {
 
     // 1. Get query from the view
 
-
-
     // const query = 'pizza';
     const query = searchView.getInput();
+
+
     // console.log(query);
 
 
@@ -70,6 +71,9 @@ const controlRecipe = async() => {
 
     if (id) {
         // Prepaare UI for changes
+
+        recipeView.clearRecipe();
+        renderLoader(variables.recipe);
         //Create new recipe object
         state.recipe = new Recipe(id);
 
@@ -80,7 +84,11 @@ const controlRecipe = async() => {
         // window.r = state.recipe;
 
 
+        //highlight the selected search item
 
+        // if (state.search) {
+        //     searchView.highlightSelected(id);
+        // }
 
 
         try {
@@ -95,7 +103,10 @@ const controlRecipe = async() => {
             state.recipe.calcServing();
 
             //Render recipe
-            console.log(state.recipe);
+            clearLoader();
+            console.log((state.recipe));
+
+            recipeView.renderRecipe(state.recipe);
 
         } catch (err) {
             alert('Error processing the recipe.');
@@ -110,7 +121,8 @@ const controlRecipe = async() => {
 }
 
 window.addEventListener('hashchange', controlRecipe);
-
+window.addEventListener('load', controlRecipe);
+window.addEventListener('load', controlSearch);
 
 /********************************************* */
 /** EVENT LISTENERS */

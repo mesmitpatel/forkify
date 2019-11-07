@@ -9,7 +9,7 @@ export default class Recipe {
     async getRecipe() {
         try {
             const res = await axios(`${proxy}https://www.food2fork.com/api/get?key=${key}&rId=${this.id}`);
-            this.title = res.data.recipe;
+            this.title = res.data.recipe.title;
             this.author = res.data.recipe.publisher;
             this.img = res.data.recipe.image_url;
             this.url = res.data.recipe.source_url;
@@ -36,6 +36,7 @@ export default class Recipe {
 
         const unitsLong = ['tablespoons', 'tablespoon', 'ounces', 'ounce', 'teaspoons', 'teaspoon', 'cans', 'can', 'cups', 'cup', 'pounds'];
         const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'can', 'can', 'cup', 'cup', 'pound'];
+        const units = [...unitsShort, 'kg', 'g'];
 
         const newIngredients = this.ingredients.map(el => {
 
@@ -43,7 +44,7 @@ export default class Recipe {
 
             let ingredient = el.toLowerCase();
             unitsLong.forEach((unit, i) => {
-                ingredient = ingredient.replace(unit, unitsShort[i]);
+                ingredient = ingredient.replace(unit, units[i]);
             });
 
             //remove parenthesis
@@ -53,7 +54,7 @@ export default class Recipe {
             //parse ingredients into count, units and ingredients
 
             const arrIng = ingredient.split(' ');
-            const unitIndex = arrIng.findIndex(el2 => unitsShort.includes(el2));
+            const unitIndex = arrIng.findIndex(el2 => units.includes(el2));
 
             let objIng;
 
@@ -64,7 +65,7 @@ export default class Recipe {
                 if (arrCount.length === 1) {
                     count = arrIng[0].replace('-', '+');
                 } else {
-                    console.log("hello evaluating");
+                    // console.log("hello evaluating");
                     count = `${arrIng.slice(0, unitIndex).join('+')}`;
                 }
 
@@ -94,4 +95,11 @@ export default class Recipe {
 
         this.ingredients = newIngredients;
     }
+
+    // updateServings(){
+    //     //servings
+    //     const newServings
+
+    //     //ingredients
+    // }
 }

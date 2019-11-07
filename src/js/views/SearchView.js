@@ -13,6 +13,10 @@ export const clearResults = () => {
     variables.searchResPages.innerHTML = '';
 };
 
+// export const highlightSelected = id => {
+//     document.querySelector(`a[href="#${id}']`).classList.add('results__link--active');
+// };
+
 //paneer butter masala extra spicy
 const limitRecipeTitle = (title, limit = 17) => {
     const newTitle = [];
