@@ -1,2 +1,2 @@
 export const proxy = 'https://cors-anywhere.herokuapp.com/';
-export const key = '8b97048ec325903b124d5aa4706b46ed';
+export const key = 'e6e1f1c076fb33513847bc975d6a96eb';
