@@ -4,8 +4,10 @@ import Recipe from './models/Recipe';
 import List from './models/List';
 import * as searchView from './views/SearchView';
 import * as recipeView from './views/recipeView';
+import * as likesView from './views/likesView';
 import * as listView from './views/listView';
 import { variables, renderLoader, elememntStrings, clearLoader } from './views/base';
+import Likes from './models/Likes';
 
 
 
@@ -16,6 +18,8 @@ import { variables, renderLoader, elememntStrings, clearLoader } from './views/b
  * Current recipe object
  * liked items object
  */
+
+
 
 const state = {};
 
@@ -97,7 +101,7 @@ const controlRecipe = async() => {
             clearLoader();
             console.log((state.recipe));
 
-            recipeView.renderRecipe(state.recipe);
+            recipeView.renderRecipe(state.recipe, state.likes.isLiked(id));
 
         } catch (err) {
             alert('Error processing the recipe.');
@@ -155,7 +159,52 @@ variables.shopping.addEventListener('click', el => {
 })
 
 
+/********************************************* */
+/** LIKE BTNS */
+/********************************************* */
 
+state.likes = new Likes();
+
+const controlLike = () => {
+    if (!state.likes) state.likes = new Likes();
+    const currentID = state.recipe.id;
+
+
+    //user has NOT yet liked current recipe
+    if (!state.likes.isLiked(currentID)) {
+        //Add like to state
+        const newLike = state.likes.addLike(
+            currentID,
+            state.recipe.title,
+            state.recipe.author,
+            state.recipe.img
+        );
+
+        //toggle btn
+        likesView.toggleLikeButton(true);
+
+        //add like to UI list
+
+        likesView.renderLike(newLike);
+        console.log(state.likes);
+
+
+        //user has NOT yet liked current recipe
+    } else {
+        //remove like to state
+        state.likes.deleteLike(currentID);
+
+        //toggle btn
+        likesView.toggleLikeButton(false);
+
+
+        //remove like to UI list
+        likesView.deleteLike(currentID);
+        console.log(state.likes);
+    }
+
+    likesView.toggleLikeMenu(state.likes.getNumLikes());
+};
 
 
 /********************************************* */
@@ -174,6 +223,8 @@ variables.recipe.addEventListener('click', e => {
 
     } else if (e.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
         controlList();
+    } else if (e.target.matches('.recipe__love, .recipe__love *')) {
+        controlLike();
     }
     // console.log(state.recipe);
 
